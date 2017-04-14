@@ -1,0 +1,26 @@
+version: "2"
+services:
+  server:
+    image: server
+    build:
+      context: .
+      dockerfile: server.Dockerfile
+    environment:
+    - SIXPACK_CONFIG_REDIS_HOST=redis
+    ports:
+    - "5000:5000"
+    links:
+    - redis
+  web:
+    image: web
+    build:
+      context: .
+      dockerfile: web.Dockerfile
+    environment:
+    - SIXPACK_CONFIG_REDIS_HOST=redis
+    ports:
+    - "5001:5001"
+    links:
+    - redis
+  redis:
+    image: redis:3.2.8

@@ -1,0 +1,43 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: sixpack
+  namespace: sixpack
+  labels:
+    app: sixpack
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: sixpack
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        volumeMounts:
+        - name: etc-nginx-nginx-conf
+          mountPath: "/etc/nginx"
+        ports:
+        - name: sixpack-web
+          containerPort: 80
+      - name: sixpack-server
+        image: jgensl2/sixpack-server:v0.1.2
+        env:
+        - name: secret_key
+          value: admin
+        ports:
+        - name: my-server
+          containerPort: 5000
+      - name: sixpack-web
+        image: jgensl2/sixpack-web:v0.1.2
+        env:
+        - name: secret_key
+          value: admin
+      - name: redis
+        image: redis:3.2.8
+      volumes:
+      - name: etc-nginx-nginx-conf
+        configMap:
+          name: nginx-config
